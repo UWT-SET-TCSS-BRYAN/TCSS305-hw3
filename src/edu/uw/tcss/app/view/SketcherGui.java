@@ -51,11 +51,11 @@ public class SketcherGui extends JPanel {
     /**
      * Creates and sets-up a sketch pad GUI to be displayed.
      *
-     * @param theDrawingTool the back-end logic for the sketch pad application
+     * @param theShapeCreator the back-end logic for the sketch pad application
      */
-    public SketcherGui(final PropChangeEnabledShapeCreatorControls theDrawingTool) {
+    public SketcherGui(final PropChangeEnabledShapeCreatorControls theShapeCreator) {
         super(new BorderLayout());
-        myShapeCreator = theDrawingTool;
+        myShapeCreator = theShapeCreator;
         myPaintPanel = new SketcherCanvas(myShapeCreator);
         myToolBar = new SketcherToolBar(myShapeCreator);
         layoutComponents();

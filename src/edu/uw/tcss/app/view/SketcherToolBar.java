@@ -42,7 +42,7 @@ public class SketcherToolBar extends JToolBar implements PropertyChangeListener 
 
     private static final int IC_SIZE = 24;
 
-    private final ShapeCreatorControls myDrawingTool;
+    private final ShapeCreatorControls myShapeCreator;
 
     private final JButton myClearButton;
 
@@ -57,9 +57,9 @@ public class SketcherToolBar extends JToolBar implements PropertyChangeListener 
     /**
      * Constructs the toolbar for the Sketcher application.
      * 
-     * @param theDrawingTool the paint panel
+     * @param theShapeCreator the paint panel
      */
-    SketcherToolBar(final ShapeCreatorControls theDrawingTool) {
+    SketcherToolBar(final ShapeCreatorControls theShapeCreator) {
         super(SwingConstants.HORIZONTAL);
         myClearButton = new JButton();
         myUndoButton = new JButton();
@@ -67,14 +67,14 @@ public class SketcherToolBar extends JToolBar implements PropertyChangeListener 
         myWidthButton = new JButton();
         myColorIcon = new ColorIcon(Color.BLACK);
 
-        myDrawingTool = theDrawingTool;
+        myShapeCreator = theShapeCreator;
         setupComponents();
         layoutComponents();
         addListeners();
     }
 
     private void setupComponents() {
-        myColorIcon.setColor(myDrawingTool.getColor());
+        myColorIcon.setColor(myShapeCreator.getColor());
 
         ImageIcon icon = new ImageIcon(ASSETS_DIR + File.separator + "ic_delete_24x24.png");
         Image smallImage = icon.getImage().getScaledInstance(
