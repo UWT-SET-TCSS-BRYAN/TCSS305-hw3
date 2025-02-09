@@ -25,6 +25,8 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
 
     private static final int DEFAULT_WIDTH = 1;
 
+    private static int instanceCount;
+
     /** The manager of PropertyChangeListeners. */
     private final PropertyChangeSupport myPcs;
 
@@ -43,13 +45,7 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
      * Creates a game with a piece in the starting location 0, 0.
      */
     public ShapeCreator() {
-        super();
-
-        myPcs = new PropertyChangeSupport(this);
-        myShapeList = new ArrayList<>();
-        myCurrentColor = UWColor.PURPLE.getColor();
-        myCurrentWidth = DEFAULT_WIDTH;
-        myPencil = new PencilTool();
+        this(new ArrayList<>());
     }
 
     /**
@@ -57,6 +53,13 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
      */
     public ShapeCreator(final List<ColorfulShape> theShapes) {
         super();
+
+        if (instanceCount > 0) {
+            throw new IllegalStateException(
+                    "You should not try to instantiate an object from this class. "
+                            + "The GUI is already doing that. See SketcherGui.createAndShowGui");
+        }
+        instanceCount++;
 
         myPcs = new PropertyChangeSupport(this);
         myShapeList = theShapes;
