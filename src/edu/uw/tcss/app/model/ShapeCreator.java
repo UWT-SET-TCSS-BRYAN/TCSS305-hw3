@@ -53,6 +53,20 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
     }
 
     /**
+     * Creates a game with a piece in the starting location 0, 0.
+     */
+    public ShapeCreator(final List<ColorfulShape> theShapes) {
+        super();
+
+        myPcs = new PropertyChangeSupport(this);
+        myShapeList = theShapes;
+        myCurrentColor = UWColor.PURPLE.getColor();
+        myCurrentWidth = DEFAULT_WIDTH;
+        myPencil = new PencilTool();
+    }
+
+
+    /**
      * {@inheritDoc}
      *
      * When the creation of a shape is begun with this method, all interested parties will be
@@ -84,7 +98,6 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
      */
     @Override
     public void continueDrawing(final int theX, final int theY) {
-
         if (myCurrentWidth > 0) {
             myPencil.setNextPoint(new Point(theX, theY));
             final ColorfulShape ps =
@@ -167,12 +180,14 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
     @Override
     public void addPropertyChangeListener(final PropertyChangeListener theListener) {
         myPcs.addPropertyChangeListener(theListener);
+        fireAllProperties();
     }
 
     @Override
     public void addPropertyChangeListener(final String thePropertyName,
                                           final PropertyChangeListener theListener) {
         myPcs.addPropertyChangeListener(thePropertyName, theListener);
+        fireAllProperties();
     }
 
     @Override
@@ -184,6 +199,13 @@ public class ShapeCreator implements PropChangeEnabledShapeCreatorControls {
     public void removePropertyChangeListener(final String thePropertyName,
                                              final PropertyChangeListener theListener) {
         myPcs.removePropertyChangeListener(thePropertyName, theListener);
+    }
+
+    private void fireAllProperties() {
+        myPcs.firePropertyChange(PROPERTY_SAVED_SHAPES, null, deepCopyShapesList());
+        myPcs.firePropertyChange(PROPERTY_WIDTH, null, myCurrentWidth);
+        myPcs.firePropertyChange(PROPERTY_COLOR, null, myCurrentColor);
+        myPcs.firePropertyChange(PROPERTY_CURRENT_SHAPE, null, null);
     }
 
     private List<ColorfulShape> deepCopyShapesList() {

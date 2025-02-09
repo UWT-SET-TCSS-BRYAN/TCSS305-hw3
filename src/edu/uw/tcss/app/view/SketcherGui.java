@@ -2,10 +2,18 @@ package edu.uw.tcss.app.view;
 
 import edu.uw.tcss.app.model.PropChangeEnabledShapeCreatorControls;
 import edu.uw.tcss.app.model.ShapeCreator;
+import edu.uw.tcss.app.model.ShapeCreatorControls;
+import edu.uw.tcss.app.model.UWColor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.geom.Path2D;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -33,7 +41,7 @@ public class SketcherGui extends JPanel {
     /** The Dimension of the screen. */
     private static final Dimension SCREEN_SIZE = KIT.getScreenSize();
 
-    private final PropChangeEnabledShapeCreatorControls myDrawingTool;
+    private final PropChangeEnabledShapeCreatorControls myShapeCreator;
 
     /** The painting surface for the PowerPaint application. */
     private final SketcherCanvas myPaintPanel;
@@ -47,9 +55,9 @@ public class SketcherGui extends JPanel {
      */
     public SketcherGui(final PropChangeEnabledShapeCreatorControls theDrawingTool) {
         super(new BorderLayout());
-        myDrawingTool = theDrawingTool;
-        myPaintPanel = new SketcherCanvas(myDrawingTool);
-        myToolBar = new SketcherToolBar(myDrawingTool);
+        myShapeCreator = theDrawingTool;
+        myPaintPanel = new SketcherCanvas(myShapeCreator);
+        myToolBar = new SketcherToolBar(myShapeCreator);
         layoutComponents();
         addListeners();
     }
@@ -60,8 +68,8 @@ public class SketcherGui extends JPanel {
     }
 
     private void addListeners() {
-        myDrawingTool.addPropertyChangeListener(myPaintPanel);
-        myDrawingTool.addPropertyChangeListener(myToolBar);
+        myShapeCreator.addPropertyChangeListener(myPaintPanel);
+        myShapeCreator.addPropertyChangeListener(myToolBar);
     }
 
     /**
@@ -78,9 +86,9 @@ public class SketcherGui extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //The Model
-        final ShapeCreator drawingTool = new ShapeCreator();
+        final ShapeCreator shapeCreator = new ShapeCreator(createInitialShapes());
 
-        final SketcherGui sketchPad = new SketcherGui(drawingTool);
+        final SketcherGui sketchPad = new SketcherGui(shapeCreator);
 
         frame.setContentPane(sketchPad);
 
@@ -90,7 +98,38 @@ public class SketcherGui extends JPanel {
                 SCREEN_SIZE.height / 2 - frame.getHeight() / 2);
 
         frame.setVisible(true);
+
     }
 
+
+    private static List<ShapeCreatorControls.ColorfulShape> createInitialShapes() {
+        final List<ShapeCreatorControls.ColorfulShape> shapes =
+                new ArrayList<>();
+        try {
+            final File file = new File(
+                    "assets/defaultShapes/initialShapes1.txt");
+            final Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNext()) {
+                final int x = scanner.nextInt();
+                final int y = scanner.nextInt();
+
+                final Path2D.Double coordinate = new Path2D.Double();
+                coordinate.moveTo(x, y);
+                coordinate.lineTo(x, y);
+                final ShapeCreatorControls.ColorfulShape dot =
+                        new ShapeCreatorControls.ColorfulShape(
+                                coordinate,
+                                UWColor.PURPLE.getColor(),
+                                5);
+                shapes.add(dot);
+            }
+            scanner.close();
+
+        } catch (final FileNotFoundException ignored) {
+
+        }
+        return shapes;
+    }
 
 }
